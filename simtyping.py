@@ -1,4 +1,5 @@
 import time
+import random
 import sys
 import argparse
 from pynput.keyboard import Key, Controller
@@ -10,8 +11,8 @@ parser.add_argument('-i', '--input', dest='infile', type=argparse.FileType('r'),
     required=True, metavar='INPUT_FILE', help='The input file')
 parser.add_argument('-p1', '--person1', dest='person1',required=True, metavar='PERSON1', help='Person 1 in the conversation')
 parser.add_argument('-p2', '--person2', dest='person2',required=True, metavar='PERSON2', help='Person 2 in the conversation')
-parser.add_argument('-ts1', '--typing-speed', dest='ts1', type=float, default=0.12)
-parser.add_argument('-c', '--countdown', type=int, dest='countdown', default=5)
+parser.add_argument('-ts1', '--typing-speed', dest='ts1', type=float, default=0.10)
+parser.add_argument('-c', '--countdown', type=int, dest='countdown', default=4)
 
 
 
@@ -27,14 +28,17 @@ def countdown(speaker, seconds):
         sys.stdout.flush
         time.sleep(1)
 
-    sys.stdout.write("\rSpeaking")
+    print("Speaking..")
         
 
 def sendthekeys(words, millseconds):
     for char in words:
         keyboard.press(char)
         keyboard.release(char)
+        current_random_delay = random.uniform(millseconds/2,millseconds)
         time.sleep(millseconds)
+    keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
 
 
 
@@ -45,7 +49,7 @@ args.infile.close()
 for line in contents:
     if person_delimiter in line:
             current_person = line.split(person_delimiter)
-            #print(args.person1 + ' is about to speak')
+            print(current_person[0] + ' is about to speak.')
             countdown(current_person[0], args.countdown)
             current_sentence = (current_person[1])
             sendthekeys(current_sentence,args.ts1) 
